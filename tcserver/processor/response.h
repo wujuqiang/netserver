@@ -14,7 +14,7 @@ public:
     explicit Response(std::string dest_ip, TcProcessor tc_processor);
     virtual ~Response();
 
-    virtual void doResponse(std::string data);
+    virtual void doResponse(char* data, unsigned int len);
 
 private:
     std::string dest_ip_;

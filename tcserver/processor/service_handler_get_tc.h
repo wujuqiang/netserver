@@ -16,7 +16,7 @@ public:
     virtual void doRequest(Data_Transfer& param);
 
 private:
-    void parseData(Data_Parse& out, std::string str);
+    void parseData(Data_Parse& out, char* str);
 };
 
 }

@@ -52,11 +52,16 @@ void TcProcessor::doProcess(Request& req)
         return;
     }
 
-    Data_Transfer data_transfer;
+    if(len > BUFF_READ_MAX_LEN-1){
+        TC_LOG_ERR("over len(%d)!", len);
+        return;
+    }
 
-    data_transfer.ip = req.GetPeerAddr().toString();
+    Data_Transfer data_transfer;
+    memset(&data_transfer,0,sizeof(data_transfer));
+
+    strncpy(data_transfer.ip, req.GetPeerAddr().toString().c_str(),sizeof(data_transfer.ip));
     data_transfer.len = len;
-    std::string str((char*)buff);
 
     ServiceHandler* service = NULL;
     switch(type){
@@ -74,7 +79,7 @@ void TcProcessor::doProcess(Request& req)
     }
 
     if(NULL != service){
-        data_transfer.data = str;
+        memcpy(data_transfer.data,(char*)buff, len);
         service->doRequest(data_transfer);
         delete service;
         service = NULL;
@@ -89,10 +94,10 @@ Error_Code TcProcessor::doResponse(Data_Transfer& param)
 {
     Error_Code ret = ERROR_CODE_OK;
     //TODO: send responseStr to destIp
-    TC_LOG_DBG("doResponse. param is (%s) dest ip is (%s)",param.data.c_str(), param.ip.c_str());
+    TC_LOG_DBG("doResponse. param is (%s) dest ip is (%s) len is (%d)",param.data, param.ip, param.len);
 
     IPAddr addr;
-    addr.SetIPAddr(param.ip.c_str());
+    addr.SetIPAddr(param.ip);
     addr.SetPort(12345);
 
     TCPClient client;
@@ -101,7 +106,7 @@ Error_Code TcProcessor::doResponse(Data_Transfer& param)
 
     Sender* sender = new Sender(conn);
     if (sender) {
-        int32_t len = sender->Write((unsigned char *)param.data.c_str(), param.data.length());
+        int32_t len = sender->Write((unsigned char *)param.data, param.len);
         TC_LOG_DBG("send %d bytes", len);
         sender->Close();
         delete sender;

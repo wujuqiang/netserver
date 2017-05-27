@@ -1,6 +1,5 @@
 #include "cristian_processor.h"
 
-#include "utility.h"
 #include <sys/time.h>
 
 namespace NetServer{
@@ -18,7 +17,7 @@ CristianProcessor::~CristianProcessor()
 void CristianProcessor::doProcess(Request& req)
 {
     //check req null???
-    NS_INF("enter!");
+    TC_LOG_DBG("enter!");
 
     unsigned char buff[MILLISCONDS_MAX_LEN+1] = {'\0'};
     int32_t ret_req = 0;
@@ -27,18 +26,19 @@ void CristianProcessor::doProcess(Request& req)
 
     if(ret_req > 0){
         std::string str = getResponseData(buff);
-        NS_INF("response is (%s)", str.c_str());
+        //TC_LOG_DBG("response is (%s)", str.c_str());
 
         req.Write((unsigned char*)str.c_str(), str.length());
     }else{
         TC_LOG_ERR("request data error is (%s)", buff);
     }
 
-    NS_INF("exit!");
+    TC_LOG_DBG("exit!");
 }
 
 uint64_t CristianProcessor::getSystemCounts()
 {
+    uint64_t ret = 1234567890000000;
     /*OSAL_ERR err = osal_get_syscnt(&ret);	
     if (OSAL_ERR_OK != err) {		
         TC_LOG_ERR("[CristianProcessorImpl] osal_get_syscnt error.");		
@@ -62,12 +62,12 @@ std::string CristianProcessor::getResponseData(unsigned char* request_data)
     str_t1 = std::string((char*)request_data);
 
     char char_t2[MILLISCONDS_MAX_LEN+1] = {'\0'};
-    snprintf(char_t2, sizeof(char_t2), "%llu", getSystemCounts());
+    snprintf(char_t2, sizeof(char_t2), "%lu", getSystemCounts());
 
     str_t2 = std::string(char_t2);
 
     char char_t3[MILLISCONDS_MAX_LEN+1] = {'\0'};
-    snprintf(char_t3, sizeof(char_t3), "%llu", getSystemCounts());
+    snprintf(char_t3, sizeof(char_t3), "%lu", getSystemCounts());
 
     str_t3 = std::string(char_t3);
 

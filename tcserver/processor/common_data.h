@@ -32,6 +32,7 @@ static const uint8_t TRANSFER_DATA_OCTONARY = 8;
 static const uint8_t TRANSFER_DATA_BINARY = 2;
 
 static const uint8_t BUFF_READ_MAX_LEN = 255;
+static const uint8_t BUFF_IP_MAX_LEN = 16;
 
 typedef enum{
     SYNC_DATA_PARSE_MILLSECONDS = 0,
@@ -75,8 +76,8 @@ typedef struct {
     int len;          //data length
     uint8_t type; //data type
     int port;
-    std::string ip;
-    std::string data; //real data
+    char ip[BUFF_IP_MAX_LEN];
+    char data[BUFF_READ_MAX_LEN]; //real data
 }Data_Transfer;
 
 // debug print

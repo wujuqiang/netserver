@@ -30,19 +30,19 @@ void ServiceHandlerGetTc::doRequest(Data_Transfer& param)
 
     TcProcessor tc_processor;
 
-    Response response(param.ip, tc_processor);
+    Response response(std::string(param.ip), tc_processor);
 
     DummyService dummy_service;
     dummy_service.handler(parse, response);
 
 }
 
-void ServiceHandlerGetTc::parseData(Data_Parse& out, std::string src)
+void ServiceHandlerGetTc::parseData(Data_Parse& out, char* src)
 {
-    TC_LOG_DBG("ParseData.data is (%s)", src.c_str());
+    TC_LOG_DBG("ParseData.data is (%s)", src);
 
     out.type = REQ_TYPE_GET_TC;
-    out.param.get_data.offset = (int64_t)strtol(src.c_str(), NULL, TRANSFER_DATA_DECIMAL);
+    out.param.get_data.offset = (int64_t)strtoll(src, NULL, TRANSFER_DATA_DECIMAL);
 
 }
 
